@@ -1,0 +1,178 @@
+% You should title the file with a .tex extension (hw1.tex, for example)
+\documentclass[11pt]{article}
+
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{algpseudocode}
+\usepackage{color}
+
+
+
+\oddsidemargin0cm
+\topmargin-2cm     %I recommend adding these three lines to increase the 
+\textwidth16.5cm   %amount of usable space on the page (and save trees)
+\textheight23.5cm  
+
+
+\begin{document}
+
+\medskip                        % Skip a "medium" amount of space
+                                % (latex determines what medium is)
+                                % Also try: \bigskip, \littleskip
+
+\section{Some definitions}
+\begin{itemize}
+\item overfitting: Given $H$, $h$ overfits if $\exists h' \in H$ such that $h'$ has smaller error over all the instances even though $h$ has a smaller error over the training examples.
+\end{itemize}
+
+\section{Decision Trees}
+
+\subsection{ID3 Algorithm}
+\begin{itemize}
+\item Constructs trees topdown. Greedy algorithm. Hypothesis space of ID3: set of decision trees. Complete space, maintains only a single hypothesis. Uses all traning examples at each step (reduced sensitivity to individual error).
+\begin{itemize}
+\item A $\leftarrow$ best attribute
+\item assign A as decision attribute for Node
+\item for each value of A, create a descendant of node
+\item sort training examples to leaves
+\item if examples perfectly classified, stop
+\item else iterate over leaves
+\end{itemize}
+\item $Entropy(S) = \sum_{i=1}^{c} -p_i lg(p_i)$ ($p_i$ is proportion belonging to class $i$, also base can vary--what would cause us to do that?)
+\item $Gain(S,A) = Entropy(S) - \sum_{v \in values(A)} \frac{|S_v|}{|S|} Entropy(S_v)$
+\begin{itemize}
+\item $S_v$: subset of $S$ for which attribute $A$ has value $v$
+\end{itemize}
+\end{itemize}
+
+\subsection{Inductive Bias of ID3}
+\begin{itemize}
+\item prefers shorter trees
+\item highest info gain attributes
+\end{itemize}
+
+\subsection{Pruning}
+\begin{itemize}
+\item Reduced error  (?)
+\item Rule post-pruning (?)
+\begin{itemize}
+\item grow the tree
+\item convert tree into equivalent set of rules
+\item prune (generalize) each rule by removing preconditions that result in improving its estimated accuracy
+\item sort pruned rules by estimated accuracy. Consider them in this sequence when classifying subsequent instances.
+\end{itemize}
+\end{itemize}
+
+\subsection{Adapting Decision Trees to Regression(?)}
+\begin{itemize}
+\item splitting criteria: variance
+\item leaves: average local linear fit
+\end{itemize}
+
+
+\section{Regression and Classification}
+\begin{itemize}
+\item Least squared error:The objective consists of adjusting the parameters of a model function to best fit a data set. A simple data set consists of n points (data pairs) $(x_i,y_i)$, i = 1, ..., n, where $x_i$ is an independent variable and $y_i$ is a dependent variable whose value is found by observation. The model function has the form $f(x,\beta)$, where the m adjustable parameters are held in the vector $\boldsymbol \beta$. The goal is to find the parameter values for the model which "best" fits the data. The least squares method finds its optimum when the sum, S, of squared residuals
+
+$S=\sum_{i=1}^{n}{r_i}^2$
+is a minimum. A residual is defined as the difference between the actual value of the dependent variable and the value predicted by the model.
+
+$r_i=y_i-f(x_i,\boldsymbol \beta)$
+An example of a model is that of the straight line in two dimensions. Denoting the intercept as $\beta_0$ and the slope as $\beta_1$, the model function is given by $f(x,\boldsymbol \beta)=\beta_0+\beta_1 x$.
+\end{itemize}
+
+\section{Neural Networks}
+\subsection{Perceptrons}
+$$o(x_1...x_n) =
+    \begin{cases}
+            1, &         \text{if } w_0+w_1x_1+...+w_nx_n>0,\\
+            0, &         \text{otherwise}.
+    \end{cases}
+$$
+where $w_0,...,w_n$ is a real-valued weight. Note that $w_0$ is a threshold that must be surpassed for the perceptron to output 1. Alternatively: $o(\vec{x}) = sgn(\vec{w}\vec{x})$. $H =\{\vec{w} | \vec{w} \in \mathbb{R}^{n+1} \}$.
+
+\subsection{Perceptron Training Rule vs Delta Rule}
+\begin{itemize}
+\item Perceptron training rule: begin with random weights, apply perceptron to each training example, update perceptron weights when it misclassifies. Iterates through training examples repeatedly until it classifies all examples correctly.
+\begin{itemize}
+\item $w_i \leftarrow w_i + \Delta w_i$
+\item $\Delta w_i=\eta (t-o) x_i$, $t$: target output for current training example. $o$:output generated for current training example. $\eta$: learning rate.
+\end{itemize}
+\item To converge, Perceptron training rule needs data to be linearly separable( Decision for this hyperplane is $\vec{w}\vec{x} >0$) and for $\eta$ to be sufficiently small.
+\item Delta rule uses \textit{gradient descent}.
+\begin{itemize}
+\item (?) task of training linear unit (1st stage of a perceptron without the threshold): $o(\vec{x}) = \vec{w}\vec{x}$
+\item training error: $E(\vec{w})=\frac{1}{2} \sum_{d \in D} (t_d - o_d)^2$, where $D$: training examples, $t_d$: target output for training example $d$, and $o_d$: output of linear unit for training example $d$.
+\item Gradient descent finds global minimum of $E$ by initializing weights, then repeatedly modifying until it hits the global min. Modification: alters in the direction that gives steepest descent. $\nabla E(\vec{w})= [\frac{\partial E}{\partial w_0},...,\frac{\partial E}{\partial w_n}]$
+\item Training rule for gradient descent: $w_i \leftarrow w_i + \Delta w_i$\\
+$\Delta w_i = -\eta \nabla E(\vec{w})$
+\item Training rule can also be written in its component form: $w_i \leftarrow w_i+\Delta w_i$\\ $\Delta w_i = -\eta \frac{\partial E}{\partial w_i}$
+\item Efficient way of finding $\frac{\partial E}{\partial w_i} = \sum_{d \in D} (t_d-o_d)(-x_{id})$, where $x_{id}$ (?) represents single input component $x_i$ for training example $d$.
+\item Rewrite: $\Delta w_i = \eta \sum_{d\in D} (t_d - o_d) (x_{id})$ (true gradient descent)
+\item Problems: slow; possibly multiple local minima in error surface (?-I thought error function was smooth, and would always find the global minimum. Example why not?)
+\item (?) Stochastic gradient descent: $\Delta w_i = \eta (t-o)x_i$ (known as delta rule). Error rule: $E_d(\vec{w}) = \frac{1}{2} (t_d - o_d)^2$ (?-relationship to the other gradient descent? Why don't we need to separate it by $x_{id}$ anymore? Is this a vector?)
+\item Stochastic versus True gradient descent
+\begin{itemize}
+\item true: error summed over all examples before updating weights. stochastic: weights updated upon examining each training example
+\item summing over multiple examples require more computation per weight update step. But using true gradient, so can use a larger step size
+\item Stochastic avoids multiple local minima because it uses $\nabla E_d(\vec{w})$ not $\nabla E(\vec{w})$
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\subsection{Threshold Unit}
+Unit for multilayer networks. Want a network that can represent highly nonlinear functions. Need unit whose output is nonlinear, but the output is also differentiable function of its inputs. $o = \sigma (\vec{w} \vec{x})$ where $\sigma(y) = \frac{1}{1-e^y}$
+\subparagraph{\textsc{BACKPROP}}
+$$E(\vec{w}) = \frac12 \sum_{d\in D} \sum_{k \in outputs}{(t_{kd} - o_{kd})^2}$$ where outputs: set of output units in network, $t_{kd}$ target, $o_{kd}$ output associated with $k^{th}$ output unit and training example $d$. (?)\\
+{\color{red}Algorithm BACKPROP}
+\begin{itemize}
+\item until termination condition is met:
+\item for i = 1 to m (m is the number of training examples)
+\begin{itemize}
+\item set $a^{(1)} = x^{(i)}$ ($i^{th}$ training example)
+\item Perform forward propagation by computing $a^{(l)}$ for $l = 2,...,L$ ($L$ is total number of layers) $a^{(l)}= \sigma (w^{(l-1)}a^{(l-1)}) $ = output of the $l^{th}$ layer. 
+\item Using $y^{(i)}$ compute $\delta^{(L)} = a^{(L)} - y^{(i)}$ ($y^{(i)}$ is the target for the $i^{th}$ training example)
+\item Then calculate (??) $\delta^{(L-1)}$ up until $\delta^{(2)}$ ($\delta^{(l)}$ is the "error" of layer $l$ and $$\delta^{(l)} = w^{(l)}\delta^{(l+1)} .* \sigma'(w^{(l)} a^{(l)})$$
+\item update $w^{(l)} = w^{(l)} + \Delta w^{(l)}$ (represents a vector of the weights of layer $l$) where  $$\Delta w^{(l)} = \eta \delta^{(l)}.*x^{(l)}$$
+\end{itemize}
+\end{itemize}
+
+\subparagraph{Momentum}
+$$\Delta w^{(l)}_n= \eta \delta^{(l)}.*x^{(l)} +\alpha w^{(l)} (n-1) $$\\ where $n$ is the iteration (adds a momentum $\alpha$)
+\begin{itemize}
+\item $E_d(\vec{w}) = \frac12 \sum_{k\in outputs}{(t_k - o_k)^2}$ error on training example $d$
+\item How to derive the \textsc{BACKPROP} rule??
+\item \textsc{BACKPROP} for multi-layer networks may converge only at a local minimum (because error surface for multi-layer networks may contain many different minima).
+\item Alternative Error Functions?
+\item Alternative Error Minimization Procedures
+\end{itemize}
+
+\subparagraph{Recurrent Networks}
+What do I need to know about recurrent networks?
+
+\section{Instance Based Learning}
+\subsection{k-NN}
+\begin{itemize}
+\item discrete: $$\hat{f} (x_q) =argmax_{v \in V} \sum_{i=1}^k{\delta(v, f(x_i))}$$ where $\delta(a,b) =1$ if $a=b$ and $0$ otherwise.
+\item continuous (for a new value, $x_q$: $$\hat{f} (x_q) = \frac{\sum_{i=1}^{k}{f(x_i)}}{k}$$
+\end{itemize}
+
+\section{Support Vector Machines}
+Maximal Margin Hyperplanes: if data linearly separable, then $\exists (\vec{w}, b)$ such that $\vec{w}^T\vec{x} + b \geq 1$ $\forall \vec{x_i} \in P$ and $\vec{w}^T\vec{x} + b \leq -1$ $\forall \vec{x_i} \in N$ (N, P are the two classes). Want to minimize $$\vec{w}^T\vec{w}$$ subject to constraints of linear separability.
+\subsection{Kernel Induced Feature Spaces}
+Map to higher dimensional \textit{feature space}, construct a separating hyperplane. $X \rightarrow H$ is $\vec{x} \rightarrow \phi(\vec{x}).$\\
+Decision function is $f(\vec{x}) = sgn (\phi(\vec{x}) w^*+b^*)$ (* means optimal weight and bias)\\
+Kernel function: $K(\vec{x} \vec{z}) =\phi(\vec{x})^T\phi(\vec{z})$. If $K$ exists, we don't even need to know what $\phi$ is.\\
+Mercer's condition: \\
+What if data is not linearly separable? (slack variables?)\\
+Lagrangian?\\
+
+\section{Boosting}
+
+\section{Computational Learning Theory}
+
+\section{Bayesian Learning}
+
+\end{document}
