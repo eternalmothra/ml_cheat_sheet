@@ -27,6 +27,13 @@
 \item overfitting: Given $H$, $h$ overfits if $\exists h' \in H$ such that $h'$ has smaller error over all the instances even though $h$ has a smaller error over the training examples.
 \end{itemize}
 
+\subparagraph{Lazy vs Eager}
+\begin{itemize}
+\item k-NN, locally weighted regression, and case-based reasoning are lazy
+\item \textsc{BACKPROP}, RBF is eager (why?), ID3 eager
+\item Lazy algorithms may use query instance $x_q$ when deciding how to generalize (can represent as a bunch of local functions). Eager methods have already developed what they think is the global function.
+\end{itemize}
+
 \section{Decision Trees}
 
 \subsection{ID3 Algorithm}
@@ -71,7 +78,6 @@
 \item leaves: average local linear fit
 \end{itemize}
 
-
 \section{Regression and Classification}
 \begin{itemize}
 \item Least squared error:The objective consists of adjusting the parameters of a model function to best fit a data set. A simple data set consists of n points (data pairs) $(x_i,y_i)$, i = 1, ..., n, where $x_i$ is an independent variable and $y_i$ is a dependent variable whose value is found by observation. The model function has the form $f(x,\beta)$, where the m adjustable parameters are held in the vector $\boldsymbol \beta$. The goal is to find the parameter values for the model which "best" fits the data. The least squares method finds its optimum when the sum, S, of squared residuals
@@ -107,7 +113,7 @@ where $w_0,...,w_n$ is a real-valued weight. Note that $w_0$ is a threshold that
 \item training error: $E(\vec{w})=\frac{1}{2} \sum_{d \in D} (t_d - o_d)^2$, where $D$: training examples, $t_d$: target output for training example $d$, and $o_d$: output of linear unit for training example $d$.
 \item Gradient descent finds global minimum of $E$ by initializing weights, then repeatedly modifying until it hits the global min. Modification: alters in the direction that gives steepest descent. $\nabla E(\vec{w})= [\frac{\partial E}{\partial w_0},...,\frac{\partial E}{\partial w_n}]$
 \item Training rule for gradient descent: $w_i \leftarrow w_i + \Delta w_i$\\
-$\Delta w_i = -\eta \nabla E(\vec{w})$
+$\Delta \vec{w} = -\eta \nabla E(\vec{w})$
 \item Training rule can also be written in its component form: $w_i \leftarrow w_i+\Delta w_i$\\ $\Delta w_i = -\eta \frac{\partial E}{\partial w_i}$
 \item Efficient way of finding $\frac{\partial E}{\partial w_i} = \sum_{d \in D} (t_d-o_d)(-x_{id})$, where $x_{id}$ (?) represents single input component $x_i$ for training example $d$.
 \item Rewrite: $\Delta w_i = \eta \sum_{d\in D} (t_d - o_d) (x_{id})$ (true gradient descent)
@@ -152,15 +158,41 @@ $$\Delta w^{(l)}_n= \eta \delta^{(l)}.*x^{(l)} +\alpha w^{(l)} (n-1) $$\\ where 
 \subparagraph{Recurrent Networks}
 What do I need to know about recurrent networks?
 
+\subparagraph{Radial Basis Functions}
+\begin{itemize}
+\item $\hat{f}(x) = w_0+ \sum_{u=1}^k{w_uKern_u(d(x_u, x))}$
+\item Equation can be thought of as training a 2-layer network. First layer computes $Kern_u$, second layer computes a linear combination of these first layer values.
+\item Kernel is defined such that $d(x_u, x) \uparrow \implies Kern_u \downarrow$
+\item RBF gives global approximation to target function represented by linear combinations of many local kernel functions (smooth linear combination).
+\item Faster to train than \textsc{BACKPROP} because input and output layer are trained separately.
+\item RBF is eager: represents global function as a linear combo of multiple local kernel functions. Local approximations RBF creates are not specifically targeted to the query.
+\item A type of ANN constructed from spatially localized kernel functions. Sort of the `link' between k-NN and ANN?
+\end{itemize}
+
+
 \section{Instance Based Learning}
 \subsection{k-NN}
 \begin{itemize}
 \item discrete: $$\hat{f} (x_q) =argmax_{v \in V} \sum_{i=1}^k{\delta(v, f(x_i))}$$ where $\delta(a,b) =1$ if $a=b$ and $0$ otherwise.
-\item continuous (for a new value, $x_q$: $$\hat{f} (x_q) = \frac{\sum_{i=1}^{k}{f(x_i)}}{k}$$
+\item continuous (for a new value, $x_q$): $$\hat{f} (x_q) = \frac{\sum_{i=1}^{k}{f(x_i)}}{k}$$
+\item distance-weighted: $w_i = \frac{1}{d(x_q, x_i)^2}$. If $x_q = x_i$ assign $\hat{f} (x_q) = f(x_i)$ (if more than one, do a majority).
+\item real valued distance weighted: $$\hat{f} (x_q) = \frac{\sum_{i=1}^{k}{f(x_i)}}{\sum_{i=1}^{k}{w_i}}$$
+\item  Inductive Bias of k-NN: assumption that nearest points are most similar
+\item k-NN is sensitive to having many irrelevant attributes `curse of dimensionality' (can deal with it by `stretching the axes', add a weight to each attribute. Can even get rid of some of the attributes by setting the weight =0)
 \end{itemize}
 
+\subparagraph{Locally Weighted Linear Regression}
+\begin{itemize}
+\item $f$ approximated near $x_q$ using $\hat{f}(\vec{x}) = \vec{w} \cdot \vec{x}$ (is this appropriate notation?)
+\item Error function using kernel: $E(x_q) = \frac12 \sum_{k\in K}{(f(x) - \hat{f}(x))^2 Kern(d(x_q, x))}$ where $K$ is the set of $k$ closest $x$ to $x_q$.
+\item I thought $w_i = Kern(d(x_q, x))$ and therefore $\frac{\partial Kern}{\partial w_i} =1$. Is this not the case??
+\end{itemize}
+I think I have a stupid calculus question. $E(x_q) = \frac12 \sum_{x \in kNN}{(f(x)-\hat{f}(x))^2K(d(x_q, x))}$ where $\hat{f}(x) = \sum_{i=0}^n w_i a_i(x)$ ($a_i(x)$ is the i'th component of x, it's a vector). Now, $K(d(x_q,x_i))=w_i$. What is $\frac{\partial E}{\partial w_i}$? Is the K function constant wrt $w_i$ when after all, it's equal to $w_i$?
+
+
 \section{Support Vector Machines}
-Maximal Margin Hyperplanes: if data linearly separable, then $\exists (\vec{w}, b)$ such that $\vec{w}^T\vec{x} + b \geq 1$ $\forall \vec{x_i} \in P$ and $\vec{w}^T\vec{x} + b \leq -1$ $\forall \vec{x_i} \in N$ (N, P are the two classes). Want to minimize $$\vec{w}^T\vec{w}$$ subject to constraints of linear separability.
+Maximal Margin Hyperplanes: if data linearly separable, then $\exists (\vec{w}, b)$ such that $\vec{w}^T\vec{x} + b \geq 1$ $\forall \vec{x_i} \in P$ and $\vec{w}^T\vec{x} + b \leq -1$ $\forall \vec{x_i} \in N$ (N, P are the two classes). Want to minimize $\vec{w}^T\vec{w}$ subject to constraints of linear separability.\\ Or, maximize $\frac2{|w|}$ while $y_i(\vec{w}^T\vec{x_1}+b) \geq 1$ $\forall i$. Note $y_i =\{+1, -1\}$. Or minimize $\frac12 |w|^2$. This is quadratic programming problem.\\
+$W(\alpha) = \sum_{i} \alpha_i - \frac12 \sum_{i,j} \alpha_i \alpha_j y_i y_j x_i^T x_j$. $w = \sum_i \alpha_i x_i y_i$. $\alpha_i$ mostly 0 $\implies$ only a few of the x's matter.
 \subsection{Kernel Induced Feature Spaces}
 Map to higher dimensional \textit{feature space}, construct a separating hyperplane. $X \rightarrow H$ is $\vec{x} \rightarrow \phi(\vec{x}).$\\
 Decision function is $f(\vec{x}) = sgn (\phi(\vec{x}) w^*+b^*)$ (* means optimal weight and bias)\\
@@ -169,10 +201,68 @@ Mercer's condition: \\
 What if data is not linearly separable? (slack variables?)\\
 Lagrangian?\\
 
+\subsection{Relationship between SVMs and Boosting}
+$H_{trial} (x) = \frac{sgn(\sum_i{\alpha_i x_i})}{\sum_i \alpha_i}$. As we use more and more weak learners, the error stays the same, but the confidence goes up. This equates to having a big margin (big margins tend to avoid overfitting). 
+
+
 \section{Boosting}
 
 \section{Computational Learning Theory}
 
 \section{Bayesian Learning}
+\subparagraph{Equations and Definitions}
+\begin{itemize}
+\item $P(h)$ : probability that a hypothesis $h$ holds
+\item $P(D)$: probability that training data $D$ will be observed
+\item Bayes' Rule: $$P(h|D) = \frac{P(D|h)P(h)}{P(D)}$$
+\item Find most probable $h \in H$ given $D$: $$h_{map} = argmax_{h \in H} P(h|D) = argmax_{h \in H} P(D|h)P(h)$$
+\item if every $h\in H$ a priori equally probable: $$h_{ml} = argmax_{h \in H} P(D|h)$$
+\end{itemize}
+
+\subparagraph{BRUTE FORCE MAP learning algorithm}
+Output $h_{map}$
+
+Let's assume:
+\begin{itemize}
+\item $D$ is noise-free
+\item Target function $c \in H$
+\item all $h$ (a priori) are equally likely
+\end{itemize}
+Then $P(h) = \frac1{|H|}$\\
+$$P(D|h) =
+    \begin{cases}
+            1, &         \text{if } d_i =h(x_i) \forall d_i \in D,\\
+            0, &         \text{otherwise}.
+    \end{cases}
+$$
+$$P(D) = \frac{|VS_{H,D}|}{|H|}$$ $|VS_{H,D}|$ is the set of hypotheses in $H$ that are consistent with $D$. Consistent learned outputs an $h$ with zero error over training examples.\\
+Therefore $$P(h|D) = \begin{cases}
+            \frac1{|VS_{H,D}|}, &         \text{if $h$ consistent with $D$}\\
+            0, &         \text{otherwise}.
+    \end{cases}
+$$
+Every consistent hypothesis is a MAP hypothesis (with these assumptions)!
+
+\subparagraph{ML and Least-Squared Error}
+Under certain assumptions any learner that minimizes squared error between the outputs of hypothesis $h$ and training data will output an ML hypothesis. No idea why. ?? ML hypothesis is the one that minimizes the sum of squared errors over the training data.
+
+\subparagraph{Bayes Optimal Classifier}
+$$P(v_j |D) = \sum_{h_j \in H}{P(v_j|h_i) P(h_i|D)}$$ (probability that correct classification is $v_j$)\\
+$$v_{map} = argmax_{v_j \in V} P(v_j|D)$$
+
+\subsection{Bayesian Belief Networks}
+\subparagraph{Naive Bayes} Classify given attributes: $v_{map} = argmax_{v_j \in V} P(v_j|a_1,...,a_n)$. Rewrite using Bayes' rule and use naive assumption that all $a_i$ are conditionally independent given $v_j$. $v_{NB} = argmax_{v_j \in V} P(v_j) \prod_{i}{P(a_i|v_j)}$.\\
+Whenever naive assumption is satisfied, $v_{NB}$ same as MAP classification.
+\subparagraph{EM Algorithm}
+\begin{itemize}
+\item arbitrary initial hypothesis
+\item repeatedly calculates expected values of the hidden variables
+\item recalculates the ML hypothesis
+\end{itemize}
+This will converge to local ML hypothesis, along with estimated values for hidden variables (why?)
+
+
+
+\section{Randomized Optimization}
 
 \end{document}
