@@ -7,7 +7,8 @@
 \usepackage{listings}
 \usepackage{algpseudocode}
 \usepackage{color}
-
+\usepackage{color}   %May be necessary if you want to color links
+\usepackage{hyperref}
 
 
 \oddsidemargin0cm
@@ -16,18 +17,23 @@
 \textheight23.5cm  
 
 
+
+
 \begin{document}
+\tableofcontents
 
 \medskip                        % Skip a "medium" amount of space
                                 % (latex determines what medium is)
                                 % Also try: \bigskip, \littleskip
+
+
 
 \section{Some definitions}
 \begin{itemize}
 \item overfitting: Given $H$, $h$ overfits if $\exists h' \in H$ such that $h'$ has smaller error over all the instances even though $h$ has a smaller error over the training examples.
 \end{itemize}
 
-\subparagraph{Lazy vs Eager}
+\section{Lazy vs Eager}
 \begin{itemize}
 \item k-NN, locally weighted regression, and case-based reasoning are lazy
 \item \textsc{BACKPROP}, RBF is eager (why?), ID3 eager
@@ -47,7 +53,7 @@
 \item if examples perfectly classified, stop
 \item else iterate over leaves
 \end{itemize}
-\item $Entropy(S) = \sum_{i=1}^{c} -p_i lg(p_i)$ ($p_i$ is proportion belonging to class $i$, also base can vary--what would cause us to do that?)
+\item $Entropy(S) = \sum_{i=1}^{c} -p_i lg(p_i)$ ($p_i$ is proportion of $S$ belonging to class $i$, also base can vary--what would cause us to do that?)
 \item $Gain(S,A) = Entropy(S) - \sum_{v \in values(A)} \frac{|S_v|}{|S|} Entropy(S_v)$
 \begin{itemize}
 \item $S_v$: subset of $S$ for which attribute $A$ has value $v$
@@ -126,11 +132,12 @@ $\Delta \vec{w} = -\eta \nabla E(\vec{w})$
 \item Stochastic avoids multiple local minima because it uses $\nabla E_d(\vec{w})$ not $\nabla E(\vec{w})$
 \end{itemize}
 \end{itemize}
+\item The cost function for a neural network is non-convex, so it may have multiple minima. Which minimum you find with gradient descent depends on the initialization.
 \end{itemize}
 
 \subsection{Threshold Unit}
 Unit for multilayer networks. Want a network that can represent highly nonlinear functions. Need unit whose output is nonlinear, but the output is also differentiable function of its inputs. $o = \sigma (\vec{w} \vec{x})$ where $\sigma(y) = \frac{1}{1-e^y}$
-\subparagraph{\textsc{BACKPROP}}
+\subsection{\textsc{BACKPROP}}
 $$E(\vec{w}) = \frac12 \sum_{d\in D} \sum_{k \in outputs}{(t_{kd} - o_{kd})^2}$$ where outputs: set of output units in network, $t_{kd}$ target, $o_{kd}$ output associated with $k^{th}$ output unit and training example $d$. (?)\\
 {\color{red}Algorithm BACKPROP}
 \begin{itemize}
@@ -145,7 +152,7 @@ $$E(\vec{w}) = \frac12 \sum_{d\in D} \sum_{k \in outputs}{(t_{kd} - o_{kd})^2}$$
 \end{itemize}
 \end{itemize}
 
-\subparagraph{Momentum}
+\subsection{Momentum}
 $$\Delta w^{(l)}_n= \eta \delta^{(l)}.*x^{(l)} +\alpha w^{(l)} (n-1) $$\\ where $n$ is the iteration (adds a momentum $\alpha$)
 \begin{itemize}
 \item $E_d(\vec{w}) = \frac12 \sum_{k\in outputs}{(t_k - o_k)^2}$ error on training example $d$
@@ -158,7 +165,7 @@ $$\Delta w^{(l)}_n= \eta \delta^{(l)}.*x^{(l)} +\alpha w^{(l)} (n-1) $$\\ where 
 \subparagraph{Recurrent Networks}
 What do I need to know about recurrent networks?
 
-\subparagraph{Radial Basis Functions}
+\subsection{Radial Basis Functions}
 \begin{itemize}
 \item $\hat{f}(x) = w_0+ \sum_{u=1}^k{w_uKern_u(d(x_u, x))}$
 \item Equation can be thought of as training a 2-layer network. First layer computes $Kern_u$, second layer computes a linear combination of these first layer values.
@@ -181,14 +188,11 @@ What do I need to know about recurrent networks?
 \item k-NN is sensitive to having many irrelevant attributes `curse of dimensionality' (can deal with it by `stretching the axes', add a weight to each attribute. Can even get rid of some of the attributes by setting the weight =0)
 \end{itemize}
 
-\subparagraph{Locally Weighted Linear Regression}
+\subsection{Locally Weighted Linear Regression}
 \begin{itemize}
 \item $f$ approximated near $x_q$ using $\hat{f}(\vec{x}) = \vec{w} \cdot \vec{x}$ (is this appropriate notation?)
 \item Error function using kernel: $E(x_q) = \frac12 \sum_{k\in K}{(f(x) - \hat{f}(x))^2 Kern(d(x_q, x))}$ where $K$ is the set of $k$ closest $x$ to $x_q$.
-\item I thought $w_i = Kern(d(x_q, x))$ and therefore $\frac{\partial Kern}{\partial w_i} =1$. Is this not the case??
 \end{itemize}
-I think I have a stupid calculus question. $E(x_q) = \frac12 \sum_{x \in kNN}{(f(x)-\hat{f}(x))^2K(d(x_q, x))}$ where $\hat{f}(x) = \sum_{i=0}^n w_i a_i(x)$ ($a_i(x)$ is the i'th component of x, it's a vector). Now, $K(d(x_q,x_i))=w_i$. What is $\frac{\partial E}{\partial w_i}$? Is the K function constant wrt $w_i$ when after all, it's equal to $w_i$?
-
 
 \section{Support Vector Machines}
 Maximal Margin Hyperplanes: if data linearly separable, then $\exists (\vec{w}, b)$ such that $\vec{w}^T\vec{x} + b \geq 1$ $\forall \vec{x_i} \in P$ and $\vec{w}^T\vec{x} + b \leq -1$ $\forall \vec{x_i} \in N$ (N, P are the two classes). Want to minimize $\vec{w}^T\vec{w}$ subject to constraints of linear separability.\\ Or, maximize $\frac2{|w|}$ while $y_i(\vec{w}^T\vec{x_1}+b) \geq 1$ $\forall i$. Note $y_i =\{+1, -1\}$. Or minimize $\frac12 |w|^2$. This is quadratic programming problem.\\
@@ -200,17 +204,74 @@ Kernel function: $K(\vec{x} \vec{z}) =\phi(\vec{x})^T\phi(\vec{z})$. If $K$ exis
 Mercer's condition: \\
 What if data is not linearly separable? (slack variables?)\\
 Lagrangian?\\
+Mercer's Theorem? \\
 
 \subsection{Relationship between SVMs and Boosting}
 $H_{trial} (x) = \frac{sgn(\sum_i{\alpha_i x_i})}{\sum_i \alpha_i}$. As we use more and more weak learners, the error stays the same, but the confidence goes up. This equates to having a big margin (big margins tend to avoid overfitting). 
 
 
 \section{Boosting}
+Boosting problem: set of weak learners combined to produce a learner with an arbitrary high accuracy.\\
+The original boosting problem asks whether a set
+of weak learners can be combined to produce a learner with an arbitrary
+high accuracy. A weak learner is a learner whose performance (at
+classification or regression) is only slightly better than random guessing.
+AdaBoost: trains multiple weak classifiers on training data, then combines into single boosted classifier. Weighted sum of weak classifiers with weights dependent on weak classifier accuracy.\\
+$N$ training examples: $x_i$, $y_i \in \{-1, +1\}$. Each example $i$ has an observation weight $w_i$ (how important example $i$ is for our current learning task).\\
+Classifier $G$: $err_S = \sum_{i=1}^N{w_i I(y_i \neq G(x_i))}$ \\
+Using weights: $err = \frac{\sum_{i=1}^N{w_i I(y_i \neq G(x_i))}}{\sum_{i=1}^N w_i}$\\
+In this way, our error metric is more sensitive to misclassified examples
+that have a greater importance weight. Denominator is only for normalization (we want an answer between 0 and $N$).
+Boosting: weights are sequentially updated. Algorithm:\\
+\begin{itemize}
+\item initialize $w_i = \frac1N$
+\item for $m =1$ to $M$:
+\begin{itemize}
+\item fit $G_m(x)$ using $w_i$'s
+\item compute $$err_m = \frac{\sum_{i=1}^N{w_i I(y_i \neq G_m(x_i))}}{\sum_{i=1}^N w_i}$$
+\item $\alpha_m = \frac{log(1-err_m)}{err_m}$
+\item $w_i \leftarrow w_i \cdot exp(\alpha_m I(y_i \neq G_m(x_i))$ for $i = 1 \dots N$
+\end{itemize}
+\item $G(x) = sign [ \sum_{m=1}^M \alpha_m G_m(x)]$ In this way, classifiers that have a poor accuracy (high error rate, low $\alpha_m$) are penalized in the final sum.
+\end{itemize}
+
+Question : where are these $G_m$'s coming from? Are they pre-set or are they created by the algorithm?
 
 \section{Computational Learning Theory}
+\subsection{Definitions}
+\begin{itemize}
+\item $H$--hypothesis space. $c \in H$--true hypothesis. $h \in H$--candidate hypothesis. $S \subseteq H$--training set.
+\item Consistent learner: Learner outputs a hypothesis such that $h(x) = c(x)$ $\forall x \in S$
+\item Version space: $VS(S) = \{ h \in H: $h$ \text{ consistent wrt to } S \}$ (ie, hypothesis consistent with training examples)
+\item training error: fraction of training examples misclassified by $h$.
+\item true error: fraction of examples that would be misclassified on sample drawn from $D$ (distribution over inputs). $error_D(h) = Pr_{x \sim D} [c(x) \neq h(x)]$
+\item $C$ is PAC-learnable by learner $L$ using $H$ $\iff$ $L$ will output $h \in H$ (with probability $1-\delta$) such that $error_D(h) \leq \varepsilon$ in time and samples polynomial in $1/\varepsilon$, $1/ \delta$, $|H|$.
+\item $\varepsilon$-exhausted version space: $VS(S)$ exhausted iff $\forall h \in VS(S)$ $error_D(h) \leq \varepsilon$.
+\end{itemize}
+
+\subsection{Haussler Theorem}
+Bounds true error.\\
+Let $error_D(h_i) > \varepsilon$ for $i = 1 \dots k$ (some $h_i$'s in $H$). How much data do we need to ``knock out'' all these hypotheses?\\
+$Pr_{x \sim D} [h_i(x) = c(x)] \leq 1- \varepsilon$ (probability that $h_i$ matches true concept is low)\\
+$Pr(h_i \text{ consistent with $c$ on $m$ examples}) \leq (1- \varepsilon)^m$ (independent).\\
+$Pr(\exists h_i \text{ consistent with $c$ on $m$ examples}) = k \cdot (1- \varepsilon)^m \leq |H| \cdot (1-\varepsilon)^m$\\
+$-\varepsilon \geq ln(1- \varepsilon) \implies (1- \varepsilon)^m \leq exp(-\varepsilon m)$\\
+Upper bound that VS not $\varepsilon$-exhausted after $m$ samples: $|H|\cdot exp(-\varepsilon m)$.\\
+Want: $|H| \cdot exp(-\varepsilon m) \leq \delta$ (solve for m).\\
+$m \geq \frac{1}{\varepsilon} (ln(|H|) + ln (\frac{1}{\delta})$
+
+\subsection{Infinite Hypotheses Spaces}
+\begin{itemize}
+\item Examples: linear separators, ANNs, decision trees (continuous inputs)
+\item $m \geq \frac{1}{\varepsilon} (8VC(H)lg(\frac{13}{\varepsilon}) + 4 lg( \frac{2}{\delta})$
+\item shatter: A set of instances $S$ is shattered by $H$ if every possible dichotomy of $S$ $\exists h \in H$ that is consistent with this dichotomy.
+\item $VC(H)$ is size of largest finite subset of instance space that can be shattered by $H$.
+\item $C$ PAC-learnable iff VC dimension is finite.
+\end{itemize}
+
 
 \section{Bayesian Learning}
-\subparagraph{Equations and Definitions}
+\subsection{Equations and Definitions}
 \begin{itemize}
 \item $P(h)$ : probability that a hypothesis $h$ holds
 \item $P(D)$: probability that training data $D$ will be observed
@@ -243,10 +304,10 @@ Therefore $$P(h|D) = \begin{cases}
 $$
 Every consistent hypothesis is a MAP hypothesis (with these assumptions)!
 
-\subparagraph{ML and Least-Squared Error}
+\subsection{ML and Least-Squared Error}
 Under certain assumptions any learner that minimizes squared error between the outputs of hypothesis $h$ and training data will output an ML hypothesis. No idea why. ?? ML hypothesis is the one that minimizes the sum of squared errors over the training data.
 
-\subparagraph{Bayes Optimal Classifier}
+\subsection{Bayes Optimal Classifier}
 $$P(v_j |D) = \sum_{h_j \in H}{P(v_j|h_i) P(h_i|D)}$$ (probability that correct classification is $v_j$)\\
 $$v_{map} = argmax_{v_j \in V} P(v_j|D)$$
 
@@ -261,8 +322,48 @@ Whenever naive assumption is satisfied, $v_{NB}$ same as MAP classification.
 \end{itemize}
 This will converge to local ML hypothesis, along with estimated values for hidden variables (why?)
 
-
+\section{Evaluating Hypotheses}
 
 \section{Randomized Optimization}
+\subsection{MIMIC}
+Directly model distribution.\\
+Algorithm:\\
+\begin{itemize}
+\item generate samples from $P^{\theta_t}(x)$
+\item set $\theta_{t+1}$ to the n'th percentile
+\item retain only those samples such that $f(x) \geq \theta_{t+1}$
+\item estimate $P^{\theta_{t+1}}(x)$
+\item repeat!
+\end{itemize}
+
+\subsection{Simulated Annealing}
+Algorithm:\\
+\begin{itemize}
+\item for finite number of iterations:
+\item sample new point $x_t$ in $N(x)$
+\item Jump to new sample with probability $P(x, x_t, T)$
+\item decrease $T$
+\end{itemize}
+$$P(x, x_t, T) =
+    \begin{cases}
+            1, &         \text{if } f(x_t) \geq f(x),\\
+            exp(\frac{f(x_t)-f(x)}{T}), &         \text{otherwise}.
+    \end{cases}
+$$
+
+\subparagraph{Genetic Algorithms}
+WHAT IS??
+
+\section{Information Theory}
+\subparagraph{Definitions}
+We'll use shorthand: Just write $x$ instead of $X= x$ for all the possible values that a random event $X$ could take on. (Am I using the terms correctly?)
+\begin{itemize}
+\item Mutual Information: $I(X,Y) = H(X) - H(X|Y)$
+\item Entropy: $H(A) = - \sum_{s \in A} P(s) lg(P(s))$
+\item Joint entropy: $H(X, Y) = - \sum_{x \in X} \sum_{y \in Y} P(x,y) lg(P(x,y))$
+\item Conditional Entropy: $H(Y|X) = -\sum_{x \in X} \sum_{y \in Y} P(x,y) lg(P(y|x))$
+\item If X independent of Y: $H(Y|X) = H(Y)$ and $H(Y,X) = H(Y) +H(X)$
+\item Kullback-Leibler divergence: $KL(p||q) = - \sum_{x \in X} p(x) lg(\frac{p(x)}{q(x)})$ for two different distributions $p$, $q$.
+\end{itemize}
 
 \end{document}

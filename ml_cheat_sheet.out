@@ -1,0 +1,36 @@
+\BOOKMARK [1][-]{section.1}{Some definitions}{}% 1
+\BOOKMARK [1][-]{section.2}{Lazy vs Eager}{}% 2
+\BOOKMARK [1][-]{section.3}{Decision Trees}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{ID3 Algorithm}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Inductive Bias of ID3}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.3}{Pruning}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.4}{Adapting Decision Trees to Regression\(?\)}{section.3}% 7
+\BOOKMARK [1][-]{section.4}{Regression and Classification}{}% 8
+\BOOKMARK [1][-]{section.5}{Neural Networks}{}% 9
+\BOOKMARK [2][-]{subsection.5.1}{Perceptrons}{section.5}% 10
+\BOOKMARK [2][-]{subsection.5.2}{Perceptron Training Rule vs Delta Rule}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.3}{Threshold Unit}{section.5}% 12
+\BOOKMARK [2][-]{subsection.5.4}{BACKPROP}{section.5}% 13
+\BOOKMARK [2][-]{subsection.5.5}{Momentum}{section.5}% 14
+\BOOKMARK [2][-]{subsection.5.6}{Radial Basis Functions}{section.5}% 15
+\BOOKMARK [1][-]{section.6}{Instance Based Learning}{}% 16
+\BOOKMARK [2][-]{subsection.6.1}{k-NN}{section.6}% 17
+\BOOKMARK [2][-]{subsection.6.2}{Locally Weighted Linear Regression}{section.6}% 18
+\BOOKMARK [1][-]{section.7}{Support Vector Machines}{}% 19
+\BOOKMARK [2][-]{subsection.7.1}{Kernel Induced Feature Spaces}{section.7}% 20
+\BOOKMARK [2][-]{subsection.7.2}{Relationship between SVMs and Boosting}{section.7}% 21
+\BOOKMARK [1][-]{section.8}{Boosting}{}% 22
+\BOOKMARK [1][-]{section.9}{Computational Learning Theory}{}% 23
+\BOOKMARK [2][-]{subsection.9.1}{Definitions}{section.9}% 24
+\BOOKMARK [2][-]{subsection.9.2}{Haussler Theorem}{section.9}% 25
+\BOOKMARK [2][-]{subsection.9.3}{Infinite Hypotheses Spaces}{section.9}% 26
+\BOOKMARK [1][-]{section.10}{Bayesian Learning}{}% 27
+\BOOKMARK [2][-]{subsection.10.1}{Equations and Definitions}{section.10}% 28
+\BOOKMARK [2][-]{subsection.10.2}{ML and Least-Squared Error}{section.10}% 29
+\BOOKMARK [2][-]{subsection.10.3}{Bayes Optimal Classifier}{section.10}% 30
+\BOOKMARK [2][-]{subsection.10.4}{Bayesian Belief Networks}{section.10}% 31
+\BOOKMARK [1][-]{section.11}{Evaluating Hypotheses}{}% 32
+\BOOKMARK [1][-]{section.12}{Randomized Optimization}{}% 33
+\BOOKMARK [2][-]{subsection.12.1}{MIMIC}{section.12}% 34
+\BOOKMARK [2][-]{subsection.12.2}{Simulated Annealing}{section.12}% 35
+\BOOKMARK [1][-]{section.13}{Information Theory}{}% 36
